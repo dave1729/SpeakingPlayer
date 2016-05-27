@@ -45,10 +45,15 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y, entity) {
     else if(entity.nKey) {
     	yindex = 8;
     }
-    else if(entity.rKey || entity.cKey) {
+    else if(entity.rKey) {
     	yindex = 9;
     }
-
+    else if(entity.cKey) {
+    	yindex = 10;
+    }
+    else if(entity.zKey) {
+    	yindex = 11;
+    }
     
     ctx.drawImage(this.spriteSheet,
                  xindex * this.frameWidth, yindex * this.frameHeight,  // source from sheet
@@ -106,8 +111,8 @@ PlayerBody.prototype.update = function () {
 
 function Mouth(game, spritesheet) {
     this.animation = new Animation(spritesheet, 80, 40, 10, 1.0, 10, true, 1.0);
-    this.x = 278;
-    this.y = 260;
+    this.x = 265;
+    this.y = 280;
     this.aKey = false;
     this.bKey = false;
     this.cKey = false;

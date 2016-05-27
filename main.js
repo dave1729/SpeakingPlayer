@@ -18,34 +18,37 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y, entity) {
     if (this.isDone()) {
         if (this.loop) this.elapsedTime = 0;
     }
-    var frame = this.currentFrame();
     var xindex = 0;
-    var yindex = 0;
-    xindex = frame % this.sheetWidth;
-    
+    var yindex = 0;  
 
-    if(entity.speed > 0) {
-    	yindex = Math.floor(frame / this.sheetWidth);
-        if(entity.jumping) {
-        	xindex = 1;
-        	yindex = 2;
-        }
-    }
-    else if(entity.speed < 0) {
+    if(entity.aKey || entity.iKey || entity.yKey) {
     	yindex = 1;
-        if(entity.jumping) {
-        	xindex = 2;
-        	yindex = 2;
-        }
     }
-    else {
-    	xindex = 0;
+    else if(entity.oKey || entity.uKey || entity.wKey) {
     	yindex = 2;
-        if(entity.jumping) {
-        	xindex = 1;
-        	yindex = 2;
-        }
     }
+    else if(entity.eKey) {
+    	yindex = 3;
+    }
+    else if(entity.sKey || entity.dKey || entity.tKey) {
+    	yindex = 4;
+    }
+    else if(entity.lKey) {
+    	yindex = 5;
+    }
+    else if(entity.mKey) {
+    	yindex = 6;
+    }
+    else if(entity.fKey || entity.vKey) {
+    	yindex = 7;
+    }
+    else if(entity.nKey) {
+    	yindex = 8;
+    }
+    else if(entity.rKey || entity.cKey) {
+    	yindex = 9;
+    }
+
     
     ctx.drawImage(this.spriteSheet,
                  xindex * this.frameWidth, yindex * this.frameHeight,  // source from sheet
@@ -83,171 +86,241 @@ Background.prototype.update = function () {
 };
 
 //no inheritance
-function Foreground(game, spritesheet) {
+function PlayerBody(game, spritesheet) {
     this.x = 0;
-    this.y = 30;
+    this.y = 0;
     this.spritesheet = spritesheet;
     this.game = game;
-    this.layer = 3;
+    this.layer = 2;
     this.control = false;
     this.ctx = game.ctx;
 };
 
-Foreground.prototype.draw = function () {
+PlayerBody.prototype.draw = function () {
     this.ctx.drawImage(this.spritesheet,
                    this.x, this.y);
 };
 
-Foreground.prototype.update = function () {
+PlayerBody.prototype.update = function () {
 };
 
-function Turtle(game, spritesheet) {
-    this.animation = new Animation(spritesheet, 4100/8, 353, 8, 0.17, 8, true, 0.5);
-    this.x = 0;
-    this.y = 135;
+function Mouth(game, spritesheet) {
+    this.animation = new Animation(spritesheet, 80, 40, 10, 1.0, 10, true, 1.0);
+    this.x = 278;
+    this.y = 260;
+    this.aKey = false;
+    this.bKey = false;
+    this.cKey = false;
+    this.dKey = false;
+    this.eKey = false;
+    this.fKey = false;
+    this.gKey = false;
+    this.hKey = false;
+    this.iKey = false;
+    this.jKey = false;
+    this.kKey = false;
+    this.lKey = false;
+    this.mKey = false;
+    this.nKey = false;
+    this.oKey = false;
+    this.pKey = false;
+    this.qKey = false;
+    this.rKey = false;
+    this.sKey = false;
+    this.tKey = false;
+    this.uKey = false;
+    this.vKey = false;
+    this.wKey = false;
+    this.xKey = false;
+    this.yKey = false;
+    this.zKey = false;
     this.speed = 0;
     this.jumping = false;
     this.jumpStartTime = 0;
     this.jumpSpeed = 0;
     this.gravity = 1500;
     this.game = game;
-    this.layer = 4;
+    this.layer = 3;
     this.laps = 0;
     this.facingLeft = false;
     this.control = true;
     this.ctx = game.ctx;
-    this.game.inputmanager.addInput("up", 'w');
-    this.game.inputmanager.addInput("down", 's');
-    this.game.inputmanager.addInput("left", 'a');
-    this.game.inputmanager.addInput("right", 'd');
-    this.game.inputmanager.addGroup();
-    this.game.inputmanager.addInput("up", 'i');
-    this.game.inputmanager.addInput("down", 'k');
-    this.game.inputmanager.addInput("left", 'j');
-    this.game.inputmanager.addInput("right", 'l');
-    this.game.inputmanager.addGroup();
-    this.game.inputmanager.addInput("up", 'm');
-    this.game.inputmanager.addInput("down", 'q');
-    this.game.inputmanager.addInput("left", 'z');
-    this.game.inputmanager.addInput("right", 'p');
-    this.game.inputmanager.iterate();
+    var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    for(var i = 0; i < 26; i+=1) {
+    	this.game.inputmanager.addInput(alpha[i], alpha[i].toLowerCase());
+    }
 }
 
-Turtle.prototype.draw = function () {
+Mouth.prototype.draw = function () {
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, this);
 }
 
-Turtle.prototype.update = function () {
+Mouth.prototype.update = function () {
     if (this.animation.elapsedTime < this.animation.totalTime)
         this.x += this.game.clockTick * this.speed;
     
-    if (this.jumping) {
-    	var time = this.game.timer.gameTime - this.jumpStartTime;
-    	this.y = 135 - this.jumpSpeed * time + 0.5 * this.gravity * time * time;
-    	if(this.y >= 135) {
-    		this.jumping = false;
-    		this.y = 135;
-    	}
-	}
-    
-    if(this.game.inputmanager.checkInput("up") && !this.jumping) {
-    	this.jumping = true;
-    	this.y -= 1;
-    	this.jumpStartTime = this.game.timer.gameTime;
-    	this.jumpSpeed = 500;
+    if(this.game.inputmanager.checkInput("A")) {
+    	this.aKey = true;
     }
-    else if(this.game.inputmanager.checkInput("down") && Math.abs(this.speed) < 16000) {
-    	this.speed = this.speed * 2;
-    	this.game.inputmanager.setFalse("down");
+    else {
+    	this.aKey = false;
     }
-    else if(this.game.inputmanager.checkInput("left") && this.speed >= 0) {
-    	this.speed = -250;
-    }	
-    else if(this.game.inputmanager.checkInput("right") && this.speed <= 0) {
-    	this.speed = 250;
-    }	
-    
-    if (this.x > 750 && this.layer === 4)  {
-    	this.x = -300;
-    	this.facingLeft = true;
-    	this.layer = 2;
-    	if(++this.laps % 25 === 0) {
-    		alert("Wow! " + this.laps + " laps! Now Lets try new controls... Can you find them?");
-			this.game.inputmanager.setAllFalse();
-			this.game.inputmanager.iterate();
-			this.game.inputmanager.setAllFalse();
-			this.speed = 0;
-    	}
+    if(this.game.inputmanager.checkInput("B")) {
+    	this.bKey = true;
     }
-    else if (this.x > 750 && this.layer === 2) {
-    	this.x = -300;
-    	this.facingLeft = false;
-    	this.layer = 4;
+    else {
+    	this.bKey = false;
     }
-    else if (this.x < -300 && this.layer === 4){
-    	this.x = 750;
-    	this.facingLeft = true;
-    	this.layer = 2;
+    if(this.game.inputmanager.checkInput("C")) {
+    	this.cKey = true;
     }
-    else if (this.x < -300 && this.layer === 2){
-    	this.x = 750;
-    	this.facingLeft = false;
-    	this.layer = 4;
+    else {
+    	this.cKey = false;
     }
-
-    
-    if(!(this.game.inputmanager.checkInput("up") ||
-    this.game.inputmanager.checkInput("down") ||
-    this.game.inputmanager.checkInput("left") ||
-    this.game.inputmanager.checkInput("right"))) {
-    	this.speed = 0;
+    if(this.game.inputmanager.checkInput("D")) {
+    	this.dKey = true;
+    }
+    else {
+    	this.dKey = false;
+    }
+    if(this.game.inputmanager.checkInput("E")) {
+    	this.eKey = true;
+    }
+    else {
+    	this.eKey = false;
+    }
+    if(this.game.inputmanager.checkInput("F")) {
+    	this.fKey = true;
+    }
+    else {
+    	this.fKey = false;
+    }
+    if(this.game.inputmanager.checkInput("G")) {
+    	this.gKey = true;
+    }
+    else {
+    	this.gKey = false;
+    }
+    if(this.game.inputmanager.checkInput("H")) {
+    	this.hKey = true;
+    }
+    else {
+    	this.hKey = false;
+    }
+    if(this.game.inputmanager.checkInput("I")) {
+    	this.iKey = true;
+    }
+    else {
+    	this.iKey = false;
+    }
+    if(this.game.inputmanager.checkInput("J")) {
+    	this.jKey = true;
+    }
+    else {
+    	this.jKey = false;
+    }
+    if(this.game.inputmanager.checkInput("K")) {
+    	this.kKey = true;
+    }
+    else {
+    	this.kKey = false;
+    }
+    if(this.game.inputmanager.checkInput("L")) {
+    	this.lKey = true;
+    }
+    else {
+    	this.lKey = false;
+    }
+    if(this.game.inputmanager.checkInput("M")) {
+    	this.mKey = true;
+    }
+    else {
+    	this.mKey = false;
+    }
+    if(this.game.inputmanager.checkInput("N")) {
+    	this.nKey = true;
+    }
+    else {
+    	this.nKey = false;
+    }
+    if(this.game.inputmanager.checkInput("O")) {
+    	this.oKey = true;
+    }
+    else {
+    	this.oKey = false;
+    }
+    if(this.game.inputmanager.checkInput("P")) {
+    	this.pKey = true;
+    }
+    else {
+    	this.pKey = false;
+    }
+    if(this.game.inputmanager.checkInput("Q")) {
+    	this.qKey = true;
+    }
+    else {
+    	this.qKey = false;
+    }
+    if(this.game.inputmanager.checkInput("R")) {
+    	this.rKey = true;
+    }
+    else {
+    	this.rKey = false;
+    }
+    if(this.game.inputmanager.checkInput("S")) {
+    	this.sKey = true;
+    }
+    else {
+    	this.sKey = false;
+    }
+    if(this.game.inputmanager.checkInput("T")) {
+    	this.tKey = true;
+    }
+    else {
+    	this.tKey = false;
+    }
+    if(this.game.inputmanager.checkInput("U")) {
+    	this.uKey = true;
+    }
+    else {
+    	this.uKey = false;
+    }
+    if(this.game.inputmanager.checkInput("V")) {
+    	this.vKey = true;
+    }
+    else {
+    	this.vKey = false;
+    }
+    if(this.game.inputmanager.checkInput("W")) {
+    	this.wKey = true;
+    }
+    else {
+    	this.wKey = false;
+    }
+    if(this.game.inputmanager.checkInput("X")) {
+    	this.xKey = true;
+    }
+    else {
+    	this.xKey = false;
+    }
+    if(this.game.inputmanager.checkInput("Y")) {
+    	this.yKey = true;
+    }
+    else {
+    	this.yKey = false;
+    }
+    if(this.game.inputmanager.checkInput("Z")) {
+    	this.zKey = true;
+    }
+    else {
+    	this.zKey = false;
     }
     Entity.prototype.update.call(this);
 }
 
-
-// inheritance 
-function Rabbit(game, spritesheet) {
-    this.animation = new Animation(spritesheet, 201, 300, 6, 0.03, 6, true, 1);
-    this.speed = 650;
-    this.ctx = game.ctx;
-    this.facingLeft = false;
-    this.jumping = false;
-    this.layer = 4;
-    this.laps = 0;
-    this.scale;
-    this.control = false;
-    Entity.call(this, game, 0, 28);
-}
-
-Rabbit.prototype = new Entity();
-Rabbit.prototype.constructor = Rabbit;
-
-Rabbit.prototype.update = function () {
-    this.x += this.game.clockTick * this.speed;   
-    if (this.x > 700 && this.layer === 4)  {
-    	this.x = -450;
-    	this.facingLeft = true;
-    	this.layer = 2;
-    	this.laps += 1;
-    }
-    else if (this.x > 700 && this.layer === 2) {
-    	this.x = -450;
-    	this.facingLeft = false;
-    	this.layer = 4;
-    }
-    Entity.prototype.update.call(this);
-}
-
-Rabbit.prototype.draw = function () {
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, this);
-    Entity.prototype.draw.call(this);
-}
-
-AM.queueDownload("./img/rabbit.png");
-AM.queueDownload("./img/turtle_sheet.png");
-AM.queueDownload("./img/forrest.png");
-AM.queueDownload("./img/bushes.png");
+AM.queueDownload("./img/Black.png");
+AM.queueDownload("./img/IntroFace.png");
+AM.queueDownload("./img/Mouth.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -257,10 +330,9 @@ AM.downloadAll(function () {
     gameEngine.init(ctx);
     gameEngine.start();
 
-    gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/forrest.png")));
-    gameEngine.addEntity(new Turtle(gameEngine, AM.getAsset("./img/turtle_sheet.png")));
-    gameEngine.addEntity(new Rabbit(gameEngine, AM.getAsset("./img/rabbit.png")));
-    gameEngine.addEntity(new Foreground(gameEngine, AM.getAsset("./img/bushes.png")));
+    gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/Black.png")));
+    gameEngine.addEntity(new PlayerBody(gameEngine, AM.getAsset("./img/IntroFace.png")));
+    gameEngine.addEntity(new Mouth(gameEngine, AM.getAsset("./img/Mouth.png")));
 
     // ctx.drawImage(img,
             // 0, 0,  // source from sheet

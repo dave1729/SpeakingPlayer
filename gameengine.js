@@ -41,100 +41,12 @@ GameEngine.prototype.start = function () {
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
     this.inputmanager.start();
-	
-    // var getXandY = function (e) {
-        // var x = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
-        // var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
-// 
-        // if (x < 1024) {
-            // x = Math.floor(x / 32);
-            // y = Math.floor(y / 32);
-        // }
-// 
-        // return { x: x, y: y };
-    // }
-// 
-    // var that = this;
-// 
-    // // event listeners are added here
-// 
-    // this.ctx.canvas.addEventListener("click", function (e) {
-        // that.click = getXandY(e);
-        // console.log(e);
-        // console.log("Left Click Event - X,Y " + e.clientX + ", " + e.clientY);
-    // }, false);
-// 
-    // this.ctx.canvas.addEventListener("contextmenu", function (e) {
-        // that.click = getXandY(e);
-        // console.log(e);
-        // console.log("Right Click Event - X,Y " + e.clientX + ", " + e.clientY);
-        // e.preventDefault();
-    // }, false);
-// 
-    // this.ctx.canvas.addEventListener("mousemove", function (e) {
-        // //console.log(e);
-        // that.mouse = getXandY(e);
-    // }, false);
-// 
-    // this.ctx.canvas.addEventListener("mousewheel", function (e) {
-        // console.log(e);
-        // that.wheel = e;
-        // console.log("Click Event - X,Y " + e.clientX + ", " + e.clientY + " Delta " + e.deltaY);
-    // }, false);
-// 
-    // this.ctx.canvas.addEventListener("keydown", function (e) {
-        // console.log(e);
-        // console.log("Key Down Event - Char " + e.code + " Code " + e.keyCode);
-        // if(e.which === 87) {
-        	// that.controlEntity.w = true;
-        // }
-        // else if(e.which === 83) {
-        	// that.controlEntity.s = true;
-        // }
-        // else if(e.which === 65) {
-        	// that.controlEntity.a = true;
-        // }	
-        // else if(e.which === 68) {
-        	// that.controlEntity.d = true;
-        // }	
-    // }, false);
-// 
-    // this.ctx.canvas.addEventListener("keypress", function (e) {
-        // that.chars[e.code] = true;
-        // console.log(e);
-        // console.log("Key Pressed Event - Char " + e.charCode + " Code " + e.keyCode);
-    // }, false);
-// 
-    // this.ctx.canvas.addEventListener("keyup", function (e) {
-        // console.log(e);
-        // console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
-        // if(e.which === 87) {
-        	// that.controlEntity.w = false;
-        // }
-        // else if(e.which === 83) {
-// 
-        	// that.controlEntity.s = false;
-        // }
-        // else if(e.which === 65) {
-        	// that.controlEntity.a = false;
-        // }	
-        // else if(e.which === 68) {
-        	// that.controlEntity.d = false;
-        // }	
-    // }, false);
-// 
-    // console.log('Input started');
 }
 
 GameEngine.prototype.addEntity = function (entity) {
     console.log('added entity');
     this.entities.push(entity);
     if(entity.control === true) this.controlEntity = entity;
-}
-
-GameEngine.prototype.draw = function () {
-    this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
-    this.ctx.save();
     
     //Sort entities by layer
     this.entities.sort(
@@ -143,20 +55,14 @@ GameEngine.prototype.draw = function () {
         	return x.layer - y.layer;
         }
     );
-    
+}
+
+GameEngine.prototype.draw = function () {
+    this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
+        
     for (var i = 0; i < this.entities.length; i++) {
-    	if(this.entities[i].facingLeft === true) {
-    		this.ctx.save();
-    		this.ctx.scale(-0.80, 0.80);
-    		this.ctx.translate(-820, 20);
-    		this.entities[i].draw(this.ctx);
-    		this.ctx.restore();
-    	}
-    	else {
-    		this.entities[i].draw(this.ctx);
-    	}
+    	this.entities[i].draw(this.ctx);
     }
-    this.ctx.restore();
 }
 
 GameEngine.prototype.update = function () {
